@@ -2,6 +2,10 @@
 
 ## python-markdown2 2.5.6 (not yet released)
 
+- Port the library and the `markdown2` command line tool from Python to Go
+  (module `github.com/trentm/python-markdown2`, command `./cmd/markdown2`), with
+  the same output, extras, options and errors; the test suite runs with
+  `go test ./...`.
 - [pull #739] Fix `header-ids` extra putting sanitized HTML into header ids in safe mode, which allowed attribute injection (#649)
 - [pull #732] Fix excessive CPU use in the inline HTML tokenizer on repeated unclosed tag fragments (#707)
 - [pull #736] Clarify how to enable file variables in the Python API and command-line help (#269, #365).

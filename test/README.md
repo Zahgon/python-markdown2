@@ -10,20 +10,20 @@ This directory holds test suite. There are a number of test sets, each in its ow
   (same as above) testing extra Markdown syntax that only PHP Markdown implements.
 
 
-# markdown2.py test results
+# markdown2 test results
 
-To run the test suite:
+To run the test suite (from the repository root):
 
-    python test.py [TAGS...]
+    go test ./...
 
-The test driver used (testlib.py) allows one to filter the tests run via short
-strings that identify specific or groups of tests. Run `python test.py -l` to
-list all available tests and their names/tags. I use the "knownfailure" tag to
-mark those tests that I know fail (e.g. the `php-markdown-extra-cases` all fail
-because markdown2.py doesn't implement those additions to the Markdown syntax).
-To run the test suite **without** the known failures:
+Each case is a subtest of `TestCases`, named after its directory and file, so
+`go test -run 'TestCases/tm-cases/auto_link' .` runs one case. The "knownfailure"
+tag marks those tests that I know fail (e.g. the `php-markdown-extra-cases` all
+fail because markdown2 doesn't implement those additions to the Markdown
+syntax); the suite skips them, as it skips the cases that need the Python-only
+pygments, wavedrom, latex2mathml or emoji packages. The output of an older
+Python-era run follows:
 
-    $ python test.py -- -knownfailure
     markdown2/tm/auto_link ... ok
     markdown2/tm/blockquote ... ok
     markdown2/tm/blockquote_with_pre ... ok

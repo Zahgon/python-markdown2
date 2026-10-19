@@ -1,48 +1,36 @@
-# python-markdown2 Makefile
+# python-markdown2 Makefile (Go port)
 SHELL=/bin/bash
 
 .PHONY: all
-all:
+all: build
+
+.PHONY: build
+build:
+	go build -o markdown2 ./cmd/markdown2
 
 .PHONY: test
 test:
-	cd test && python testall.py
+	go vet ./...
+	go test ./...
 
+# The test suite without the slow ReDoS checks.
 .PHONY: testone
 testone:
-	cd test && python test.py -- -knownfailure
-
-.PHONY: testwarn
-testwarn:
-	cd test && python -Wd test.py -- -knownfailure
+	go test -short ./...
 
 .PHONY: testredos
 testredos:
-	python test/test_redos.py
+	go test -run TestReDoS -v .
 
-.PHONY: pygments
-pygments:
-	[[ -d deps/pygments ]] || ( \
-		mkdir -p deps && \
-		hg clone https://bitbucket.org/birkenfeld/pygments-main deps/pygments)
-	(cd deps/pygments && hg pull && hg update)
-	# And for Python 3 usage:
-	rm -rf deps/pygments3
-	mkdir -p deps/pygments3
-	cp -PR deps/pygments/pygments deps/pygments3/pygments
-	2to3 -w --no-diffs deps/pygments3/pygments
+.PHONY: bench
+bench:
+	go test -run XXX -bench . .
 
 clean:
-	rm -rf build dist MANIFEST
-
+	rm -rf build dist markdown2
 
 .PHONY: versioncheck
 versioncheck:
-	[[ `grep '^__version_info__' lib/markdown2.py | cut -d'(' -f2 | cut -d')' -f1 | sed 's/, /./g'` \
+	[[ `grep '^const Version' markdown2.go | cut -d'"' -f2` \
 	    == `grep '^## ' CHANGES.md | head -1 | awk '{print $$3}'` ]]
 	@echo Version check ok.
-
-.PHONY: cutarelease
-cutarelease: versioncheck
-	./tools/cutarelease.py -f lib/markdown2.py
-
